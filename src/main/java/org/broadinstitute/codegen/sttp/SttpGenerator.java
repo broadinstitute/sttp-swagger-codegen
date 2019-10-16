@@ -179,7 +179,7 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
 
   @Override
   public String getName() {
-    return "scala";
+    return "sttp";
   }
 
   @Override
