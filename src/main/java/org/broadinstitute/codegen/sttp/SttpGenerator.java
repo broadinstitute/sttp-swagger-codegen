@@ -1,4 +1,4 @@
-package io.swagger.codegen.languages;
+package org.broadinstitute.codegen.sttp;
 
 import io.swagger.codegen.*;
 
@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import io.swagger.codegen.languages.AbstractScalaCodegen;
 import org.apache.commons.lang3.StringUtils;
 
 public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig {
