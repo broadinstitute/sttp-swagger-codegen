@@ -1,9 +1,8 @@
-set -x
 root_dir=~/git/sttp-swagger-codegen
 swagger_codegen_jar=~/software/swagger/swagger-codegen-cli.jar
 module_jar=$root_dir/target/sttp-swagger-codegen-1.0.0.jar
 testrun_dir=testrun
-codegen_dir=codegen
+codegen_dir=~/tmp/sttp_testrun/
 swagger_file=terra-api.yaml
 cd $root_dir || exit
 echo "Building and packaging sstp module"
