@@ -1,0 +1,9 @@
+{{>licenseInfo}}
+package {{invokerPackage}}
+
+object Encoders {
+  trait RequestWriter[T] {
+    def write(item: T): String
+  }
+  implicit def requestWriter[T]: RequestWriter[T] = ???
+}

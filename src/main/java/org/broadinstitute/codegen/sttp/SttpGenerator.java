@@ -53,6 +53,12 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
 
     supportingFiles.add(new SupportingFile("apiInvoker.mustache",
             (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "ApiInvoker.scala"));
+    supportingFiles.add(new SupportingFile("Decoders.scala.mustache",
+            (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "Decoders.scala"));
+    supportingFiles.add(new SupportingFile("Encoders.scala.mustache",
+            (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "Encoders.scala"));
+    supportingFiles.add(new SupportingFile("Backends.scala.mustache",
+            (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "Backends.scala"));
     supportingFiles.add(new SupportingFile("client.mustache",
             (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), clientName + ".scala"));
     supportingFiles.add(new SupportingFile("git_push.sh.mustache", "", "git_push.sh"));
