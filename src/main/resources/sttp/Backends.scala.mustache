@@ -6,8 +6,7 @@ import scala.concurrent.Future
 object Backends {
   class Client {
     def submit(method: String, path: String, queryParams: Map[String, String], headerParams: Map[String, String],
-               body: String): Future[Int] = ???
+               body: String): Option[Int] = ???
   }
   val client = new Client
-  def process[T](item: => T): Future[T] = ???
 }
