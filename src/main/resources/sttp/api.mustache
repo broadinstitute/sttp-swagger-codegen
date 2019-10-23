@@ -7,13 +7,7 @@ import {{invokerPackage}}.Decoders._
 import {{invokerPackage}}.Encoders._
 import {{invokerPackage}}.Backends._
 
-import scala.concurrent.Future
 import collection.mutable
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent._
-import scala.concurrent.duration._
-import scala.util.{Failure, Success, Try}
 
 {{#operations}}
 class {{classname}}() {
@@ -26,9 +20,14 @@ class {{classname}}() {
 {{#allParams}}   * @param {{paramName}} {{description}} {{^required}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
 {{/allParams}}   * @return {{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Option[Unit]{{/returnType}}
    */
-  def {{operationId}}({{#allParams}}{{^required}}{{paramName}}: Option[{{dataType}}] = {{#defaultValue}}Option({{#isString}}"{{{defaultValue}}}"{{/isString}}{{^isString}}{{#isByteArray}}"{{/isByteArray}}{{#isDate}}dateFormatter.parse("{{/isDate}}{{#isDateTime}}dateTimeFormatter.parse("{{/isDateTime}}{{{defaultValue}}}{{#isDate}}"){{/isDate}}{{#isDateTime}}"){{/isDateTime}}{{#isByteArray}}".getBytes{{/isByteArray}}{{/isString}}){{/defaultValue}}{{^defaultValue}}None{{/defaultValue}}{{#hasMore}},{{/hasMore}}
-  {{/required}}{{#required}}{{paramName}}: {{dataType}}{{#defaultValue}} = {{#isString}}"{{{defaultValue}}}"{{/isString}}{{^isString}}{{#isByteArray}}"{{/isByteArray}}{{#isDate}}dateFormatter.parse("{{/isDate}}{{#isDateTime}}dateTimeFormatter.parse("{{/isDateTime}}{{{defaultValue}}}{{#isDate}}"){{/isDate}}{{#isDateTime}}"){{/isDateTime}}{{#isByteArray}}".getBytes{{/isByteArray}}{{/isString}}{{/defaultValue}}{{#hasMore}},
-  {{/hasMore}}{{/required}}{{/allParams}})(implicit reader: ClientResponseReader[{{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}Unit{{/returnType}}]{{#bodyParams}}, writer: RequestWriter[{{^required}}Option[{{dataType}}]{{/required}}{{#required}}{{dataType}}{{/required}}]{{/bodyParams}}){{#returnType}}: Option[{{returnType}}]{{/returnType}}{{^returnType}}: Option[Unit]{{/returnType}} = {
+  def {{operationId}}(
+    {{#allParams}}{{^required}}{{paramName}}: Option[{{dataType}}] = {{#defaultValue}}Option({{#isString}}"{{{defaultValue}}}"{{/isString}}{{^isString}}{{#isByteArray}}"{{/isByteArray}}{{#isDate}}dateFormatter.parse("{{/isDate}}{{#isDateTime}}dateTimeFormatter.parse("{{/isDateTime}}{{{defaultValue}}}{{#isDate}}"){{/isDate}}{{#isDateTime}}"){{/isDateTime}}{{#isByteArray}}".getBytes{{/isByteArray}}{{/isString}}){{/defaultValue}}{{^defaultValue}}None{{/defaultValue}}{{#hasMore}},{{/hasMore}}
+    {{/required}}{{#required}}{{paramName}}: {{dataType}}{{#defaultValue}} = {{#isString}}"{{{defaultValue}}}"{{/isString}}{{^isString}}{{#isByteArray}}"{{/isByteArray}}{{#isDate}}dateFormatter.parse("{{/isDate}}{{#isDateTime}}dateTimeFormatter.parse("{{/isDateTime}}{{{defaultValue}}}{{#isDate}}"){{/isDate}}{{#isDateTime}}"){{/isDateTime}}{{#isByteArray}}".getBytes{{/isByteArray}}{{/isString}}{{/defaultValue}}{{#hasMore}},
+    {{/hasMore}}{{/required}}{{/allParams}}
+  )(implicit
+    reader: ClientResponseReader[{{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}Unit{{/returnType}}]{{#bodyParams}},
+    writer: RequestWriter[{{^required}}Option[{{dataType}}]{{/required}}{{#required}}{{dataType}}{{/required}}]{{/bodyParams}}
+  ){{#returnType}}: Option[{{returnType}}]{{/returnType}}{{^returnType}}: Option[Unit]{{/returnType}} = {
   // create path and map variables
   val path = "{{path}}"{{#pathParams}}
       .replaceAll("\\{" + "{{baseName}}" + "\\}", {{paramName}}.toString){{/pathParams}}
@@ -40,34 +39,34 @@ class {{classname}}() {
   {{#allParams}}
       {{#required}}
           {{^isPrimitiveType}}
-              if ({{paramName}} == null) throw new Exception("Missing required parameter '{{paramName}}' when calling {{classname}}->{{operationId}}")
+      if ({{paramName}} == null) throw new Exception("Missing required parameter '{{paramName}}' when calling {{classname}}->{{operationId}}")
           {{/isPrimitiveType}}
           {{#isString}}
-              if ({{paramName}} == null) throw new Exception("Missing required parameter '{{paramName}}' when calling {{classname}}->{{operationId}}")
+      if ({{paramName}} == null) throw new Exception("Missing required parameter '{{paramName}}' when calling {{classname}}->{{operationId}}")
 
           {{/isString}}
       {{/required}}
   {{/allParams}}
   {{#queryParams}}
       {{^required}}
-          {{paramName}} match {
-          case Some(param) => queryParams += "{{baseName}}" -> param.toString
-          case _ => queryParams
-          }
+      {{paramName}} match {
+        case Some(param) => queryParams += "{{baseName}}" -> param.toString
+        case _ => queryParams
+      }
       {{/required}}
       {{#required}}
-          queryParams += "{{baseName}}" -> {{paramName}}.toString
+      queryParams += "{{baseName}}" -> {{paramName}}.toString
       {{/required}}
   {{/queryParams}}
   {{#headerParams}}
       {{^required}}
-          {{paramName}} match {
+      {{paramName}} match {
           case Some(param) => headerParams += "{{baseName}}" -> param.toString
           case _ => headerParams
-          }
+      }
       {{/required}}
       {{#required}}
-          headerParams += "{{baseName}}" -> {{paramName}}.toString
+      headerParams += "{{baseName}}" -> {{paramName}}.toString
       {{/required}}
   {{/headerParams}}
 
