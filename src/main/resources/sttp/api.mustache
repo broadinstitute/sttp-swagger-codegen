@@ -3,6 +3,11 @@ package {{package}}
 
 {{#imports}}import {{import}}
 {{/imports}}
+
+import sttp.client._
+import sttp.model.Uri
+
+
 import {{invokerPackage}}.Decoders._
 import {{invokerPackage}}.Encoders._
 import {{invokerPackage}}.Backends._
@@ -69,6 +74,9 @@ class {{classname}}() {
       headerParams += "{{baseName}}" -> {{paramName}}.toString
       {{/required}}
   {{/headerParams}}
+
+
+    basicRequest.{{httpMethod.toLowerCase}}(Uri(path))
 
     val resOpt = client.submit("{{httpMethod}}", path, queryParams.toMap, headerParams.toMap, {{#bodyParam}}writer.write({{paramName}}){{/bodyParam}}{{^bodyParam}}"{{emptyBodyParam}}"{{/bodyParam}})
     resOpt.map(reader.read)
