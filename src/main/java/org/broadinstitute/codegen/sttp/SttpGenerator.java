@@ -3,8 +3,9 @@ package org.broadinstitute.codegen.sttp;
 import io.swagger.codegen.*;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.swagger.codegen.languages.AbstractScalaCodegen;
 import org.apache.commons.lang3.StringUtils;
@@ -220,6 +221,96 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
   @Override
   public String toEnumName(CodegenProperty property) {
     return formatIdentifier(stripPackageName(property.baseName), true);
+  }
+
+  static class ExtendedCodegenOperation extends CodegenOperation {
+
+    public ExtendedCodegenOperation(CodegenOperation o) {
+      super();
+
+      // Copy all fields of CodegenOperation
+      this.responseHeaders.addAll(o.responseHeaders);
+      this.hasAuthMethods = o.hasAuthMethods;
+      this.hasConsumes = o.hasConsumes;
+      this.hasProduces = o.hasProduces;
+      this.hasParams = o.hasParams;
+      this.hasOptionalParams = o.hasOptionalParams;
+      this.returnTypeIsPrimitive = o.returnTypeIsPrimitive;
+      this.returnSimpleType = o.returnSimpleType;
+      this.subresourceOperation = o.subresourceOperation;
+      this.isMapContainer = o.isMapContainer;
+      this.isListContainer = o.isListContainer;
+      this.isMultipart = o.isMultipart;
+      this.hasMore = o.hasMore;
+      this.isResponseBinary = o.isResponseBinary;
+      this.hasReference = o.hasReference;
+      this.isRestfulIndex = o.isRestfulIndex;
+      this.isRestfulShow = o.isRestfulShow;
+      this.isRestfulCreate = o.isRestfulCreate;
+      this.isRestfulUpdate = o.isRestfulUpdate;
+      this.isRestfulDestroy = o.isRestfulDestroy;
+      this.isRestful = o.isRestful;
+      this.path = o.path;
+      this.operationId = o.operationId;
+      this.returnType = o.returnType;
+      this.httpMethod = o.httpMethod;
+      this.returnBaseType = o.returnBaseType;
+      this.returnContainer = o.returnContainer;
+      this.summary = o.summary;
+      this.unescapedNotes = o.unescapedNotes;
+      this.notes = o.notes;
+      this.baseName = o.baseName;
+      this.defaultResponse = o.defaultResponse;
+      this.discriminator = o.discriminator;
+      this.consumes = o.consumes;
+      this.produces = o.produces;
+      this.bodyParam = o.bodyParam;
+      this.allParams = o.allParams;
+      this.bodyParams = o.bodyParams;
+      this.pathParams = o.pathParams;
+      this.queryParams = o.queryParams;
+      this.headerParams = o.headerParams;
+      this.formParams = o.formParams;
+      this.authMethods = o.authMethods;
+      this.tags = o.tags;
+      this.responses = o.responses;
+      this.imports = o.imports;
+      this.examples = o.examples;
+      this.externalDocs = o.externalDocs;
+      this.vendorExtensions = o.vendorExtensions;
+      this.nickname = o.nickname;
+      this.operationIdLowerCase = o.operationIdLowerCase;
+      this.operationIdCamelCase = o.operationIdCamelCase;
+    }
+
+    public String getHttpMethodLowerCase() {
+      return httpMethod.toLowerCase();
+    }
+
+  }
+
+  @Override
+  public Map<String, Object> postProcessOperations(Map<String, Object> objs) {
+    Map<String, Object> operations = (Map<String, Object>) super.postProcessOperations(objs).get("operations");
+    List<CodegenOperation> os = (List<CodegenOperation>) operations.get("operation");
+    List<ExtendedCodegenOperation> newOs = new ArrayList<>();
+    for (CodegenOperation o : os) {
+      ExtendedCodegenOperation eco = new ExtendedCodegenOperation(o);
+
+      // detect multipart form types
+      if (eco.hasConsumes == Boolean.TRUE) {
+        Map<String, String> firstType = eco.consumes.get(0);
+        if (firstType != null) {
+          if ("multipart/form-data".equals(firstType.get("mediaType"))) {
+            eco.isMultipart = Boolean.TRUE;
+          }
+        }
+      }
+
+      newOs.add(eco);
+    }
+    operations.put("operation", newOs);
+    return objs;
   }
 
 }

@@ -76,7 +76,7 @@ class {{classname}}() {
   {{/headerParams}}
 
 
-    basicRequest.{{httpMethod.toLowerCase}}(Uri(path))
+    basicRequest.{{httpMethodLowerCase}}(Uri(path))
 
     val resOpt = client.submit("{{httpMethod}}", path, queryParams.toMap, headerParams.toMap, {{#bodyParam}}writer.write({{paramName}}){{/bodyParam}}{{^bodyParam}}"{{emptyBodyParam}}"{{/bodyParam}})
     resOpt.map(reader.read)
