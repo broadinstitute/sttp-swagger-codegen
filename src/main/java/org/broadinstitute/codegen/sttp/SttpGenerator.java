@@ -287,6 +287,24 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
       return httpMethod.toLowerCase();
     }
 
+    public String getPathWithInterpolations() {
+      String pathTmp = path;
+      for(CodegenParameter pathParam : pathParams) {
+        pathTmp =
+          pathTmp.replace("{" + pathParam.baseName + "}", "${" + pathParam.paramName + "}");
+      }
+      return pathTmp;
+    }
+    public String getQuery() {
+      String queryTmp = "";
+      boolean isFirst = true;
+      for(CodegenParameter queryParam : queryParams) {
+        String prefix = isFirst ? "?" : "&";
+        String assignment = queryParam.baseName + "=${" + queryParam.paramName + "}";
+        queryTmp = queryTmp + prefix + assignment;
+      }
+      return queryTmp;
+    }
   }
 
   @Override
