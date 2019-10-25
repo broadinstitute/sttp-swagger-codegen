@@ -1,8 +1,16 @@
 {{>licenseInfo}}
 package {{invokerPackage}}
 
+import {{modelPackage}}._
 import io.circe.Encoder
+import io.circe.generic.auto._
 
 object Encoders {
-  implicit def encoder[T]: Encoder[T] = ???
+  // implicit def encoder[T]: Encoder[T] = ???
+
+{{#models}}
+    {{#model}}
+  // implicit def encoder{{classname}}: Encoder[{{classname}}] = implicitly[{{classname}}]
+    {{/model}}
+{{/models}}
 }
