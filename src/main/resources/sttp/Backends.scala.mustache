@@ -1,12 +1,5 @@
 {{>licenseInfo}}
 package {{invokerPackage}}
 
-import scala.concurrent.Future
-
 object Backends {
-  class Client {
-    def submit(method: String, path: String, queryParams: Map[String, String], headerParams: Map[String, String],
-               body: String): Option[Int] = ???
-  }
-  val client = new Client
 }

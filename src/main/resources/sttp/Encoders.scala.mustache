@@ -1,9 +1,8 @@
 {{>licenseInfo}}
 package {{invokerPackage}}
 
+import io.circe.Encoder
+
 object Encoders {
-  trait RequestWriter[T] {
-    def write(item: T): String
-  }
-  implicit def requestWriter[T]: RequestWriter[T] = ???
+  implicit def encoder[T]: Encoder[T] = ???
 }

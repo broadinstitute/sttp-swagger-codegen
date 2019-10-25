@@ -1,11 +1,8 @@
 {{>licenseInfo}}
 package {{invokerPackage}}
 
-import scala.concurrent.Future
+import io.circe.Decoder
 
 object Decoders {
-  trait ClientResponseReader[T] {
-    def read(i: Int): T
-  }
-  implicit def clientResponseReader[T]: ClientResponseReader[T] = ???
+  implicit def decoder[T]: Decoder[T] = ???
 }

@@ -5,15 +5,11 @@ package {{package}}
 {{/imports}}
 
 import sttp.client._
-import sttp.model.Uri
-
+import sttp.client.circe._
 
 import {{invokerPackage}}.Decoders._
 import {{invokerPackage}}.Encoders._
-import {{invokerPackage}}.Backends._
 import {{invokerPackage}}.SttpUtils.Implicits._
-
-import collection.mutable
 
 {{#operations}}
 class {{classname}}() {
@@ -24,23 +20,12 @@ class {{classname}}() {
    * {{notes}}
    *
 {{#allParams}}   * @param {{paramName}} {{description}} {{^required}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
-{{/allParams}}   * @return {{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Option[Unit]{{/returnType}}
+{{/allParams}}   * @return Option[{{returnTypeOrUnit}}]
    */
   def {{operationId}}(
     {{#allParams}}{{^required}}{{paramName}}: Option[{{dataType}}] = {{#defaultValue}}Option({{#isString}}"{{{defaultValue}}}"{{/isString}}{{^isString}}{{#isByteArray}}"{{/isByteArray}}{{#isDate}}dateFormatter.parse("{{/isDate}}{{#isDateTime}}dateTimeFormatter.parse("{{/isDateTime}}{{{defaultValue}}}{{#isDate}}"){{/isDate}}{{#isDateTime}}"){{/isDateTime}}{{#isByteArray}}".getBytes{{/isByteArray}}{{/isString}}){{/defaultValue}}{{^defaultValue}}None{{/defaultValue}}{{#hasMore}},{{/hasMore}}
     {{/required}}{{#required}}{{paramName}}: {{dataType}}{{#defaultValue}} = {{#isString}}"{{{defaultValue}}}"{{/isString}}{{^isString}}{{#isByteArray}}"{{/isByteArray}}{{#isDate}}dateFormatter.parse("{{/isDate}}{{#isDateTime}}dateTimeFormatter.parse("{{/isDateTime}}{{{defaultValue}}}{{#isDate}}"){{/isDate}}{{#isDateTime}}"){{/isDateTime}}{{#isByteArray}}".getBytes{{/isByteArray}}{{/isString}}{{/defaultValue}}{{#hasMore}},
-    {{/hasMore}}{{/required}}{{/allParams}})(implicit
-    reader: ClientResponseReader[{{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}Unit{{/returnType}}]{{#bodyParams}},
-    writer: RequestWriter[{{^required}}Option[{{dataType}}]{{/required}}{{#required}}{{dataType}}{{/required}}]{{/bodyParams}}
-  ){{#returnType}}: Option[{{returnType}}]{{/returnType}}{{^returnType}}: Option[Unit]{{/returnType}} = {
-  // create path and map variables
-    val path = "{{path}}"{{#pathParams}}
-        .replaceAll("\\{" + "{{baseName}}" + "\\}", {{paramName}}.toString){{/pathParams}}
-
-    // query params
-    val queryParams = new mutable.HashMap[String, String]
-    val headerParams = new mutable.HashMap[String, String]
-
+    {{/hasMore}}{{/required}}{{/allParams}}): Request[Either[ResponseError[io.circe.Error],{{returnTypeOrUnit}}],Nothing] = {
   {{#allParams}}
       {{#required}}
           {{^isPrimitiveType}}
@@ -51,28 +36,6 @@ class {{classname}}() {
           {{/isString}}
       {{/required}}
   {{/allParams}}
-  {{#queryParams}}
-      {{^required}}
-      {{paramName}} match {
-        case Some(param) => queryParams += "{{baseName}}" -> param.toString
-        case _ => queryParams
-      }
-      {{/required}}
-      {{#required}}
-      queryParams += "{{baseName}}" -> {{paramName}}.toString
-      {{/required}}
-  {{/queryParams}}
-  {{#headerParams}}
-      {{^required}}
-      {{paramName}} match {
-          case Some(param) => headerParams += "{{baseName}}" -> param.toString
-          case _ => headerParams
-      }
-      {{/required}}
-      {{#required}}
-      headerParams += "{{baseName}}" -> {{paramName}}.toString
-      {{/required}}
-  {{/headerParams}}
 
     basicRequest
       .{{httpMethodLowerCase}}(uri"{{basePath}}{{{pathWithInterpolations}}}{{{query}}}")
@@ -84,9 +47,10 @@ class {{classname}}() {
       .header({{baseName}}, {{paramName}}.toString)
       {{/required}}
   {{/headerParams}}
-
-    val resOpt = client.submit("{{httpMethod}}", path, queryParams.toMap, headerParams.toMap, {{#bodyParam}}writer.write({{paramName}}){{/bodyParam}}{{^bodyParam}}"{{emptyBodyParam}}"{{/bodyParam}})
-    resOpt.map(reader.read)
+  {{#bodyParam}}
+      .body({{paramName}})
+  {{/bodyParam}}
+      .response(asJson[{{returnTypeOrUnit}}])
   }
 
   {{/operation}}
