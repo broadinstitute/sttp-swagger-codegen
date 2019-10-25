@@ -1,14 +1,11 @@
 package org.broadinstitute.codegen.sttp;
 
 import io.swagger.codegen.*;
+import io.swagger.codegen.languages.AbstractScalaCodegen;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import io.swagger.codegen.languages.AbstractScalaCodegen;
-import org.apache.commons.lang3.StringUtils;
 
 public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig {
   protected String authScheme = "";
@@ -58,6 +55,8 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
             (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "Encoders.scala"));
     supportingFiles.add(new SupportingFile("Backends.scala.mustache",
             (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "Backends.scala"));
+    supportingFiles.add(new SupportingFile("SttpUtils.scala.mustache",
+            (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "SttpUtils.scala"));
     supportingFiles.add(new SupportingFile("client.mustache",
             (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), clientName + ".scala"));
     supportingFiles.add(new SupportingFile("git_push.sh.mustache", "", "git_push.sh"));

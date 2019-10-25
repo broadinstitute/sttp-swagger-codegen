@@ -1,0 +1,19 @@
+{{>licenseInfo}}
+package {{invokerPackage}}
+
+import sttp.client.Request
+
+object SttpUtils {
+
+  object Implicits {
+    implicit class RichRequest[T, S](val request: Request[T, S])  extends AnyVal {
+      def headerOpt(key: String, valueOpt: Option[String]) : Request[T, S] = addHeaderOpt(request, key, valueOpt)
+    }
+  }
+
+  def addHeaderOpt[T, S](request: Request[T, S], key: String, valueOpt: Option[String]): Request[T, S] =
+    valueOpt match {
+      case Some(value) => request.header(key, value)
+      case None => request
+  }
+}

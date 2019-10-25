@@ -11,6 +11,7 @@ import sttp.model.Uri
 import {{invokerPackage}}.Decoders._
 import {{invokerPackage}}.Encoders._
 import {{invokerPackage}}.Backends._
+import {{invokerPackage}}.SttpUtils.Implicits._
 
 import collection.mutable
 
@@ -28,27 +29,25 @@ class {{classname}}() {
   def {{operationId}}(
     {{#allParams}}{{^required}}{{paramName}}: Option[{{dataType}}] = {{#defaultValue}}Option({{#isString}}"{{{defaultValue}}}"{{/isString}}{{^isString}}{{#isByteArray}}"{{/isByteArray}}{{#isDate}}dateFormatter.parse("{{/isDate}}{{#isDateTime}}dateTimeFormatter.parse("{{/isDateTime}}{{{defaultValue}}}{{#isDate}}"){{/isDate}}{{#isDateTime}}"){{/isDateTime}}{{#isByteArray}}".getBytes{{/isByteArray}}{{/isString}}){{/defaultValue}}{{^defaultValue}}None{{/defaultValue}}{{#hasMore}},{{/hasMore}}
     {{/required}}{{#required}}{{paramName}}: {{dataType}}{{#defaultValue}} = {{#isString}}"{{{defaultValue}}}"{{/isString}}{{^isString}}{{#isByteArray}}"{{/isByteArray}}{{#isDate}}dateFormatter.parse("{{/isDate}}{{#isDateTime}}dateTimeFormatter.parse("{{/isDateTime}}{{{defaultValue}}}{{#isDate}}"){{/isDate}}{{#isDateTime}}"){{/isDateTime}}{{#isByteArray}}".getBytes{{/isByteArray}}{{/isString}}{{/defaultValue}}{{#hasMore}},
-    {{/hasMore}}{{/required}}{{/allParams}}
-  )(implicit
+    {{/hasMore}}{{/required}}{{/allParams}})(implicit
     reader: ClientResponseReader[{{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}Unit{{/returnType}}]{{#bodyParams}},
     writer: RequestWriter[{{^required}}Option[{{dataType}}]{{/required}}{{#required}}{{dataType}}{{/required}}]{{/bodyParams}}
   ){{#returnType}}: Option[{{returnType}}]{{/returnType}}{{^returnType}}: Option[Unit]{{/returnType}} = {
   // create path and map variables
-  val path = "{{path}}"{{#pathParams}}
-      .replaceAll("\\{" + "{{baseName}}" + "\\}", {{paramName}}.toString){{/pathParams}}
+    val path = "{{path}}"{{#pathParams}}
+        .replaceAll("\\{" + "{{baseName}}" + "\\}", {{paramName}}.toString){{/pathParams}}
 
-  // query params
-  val queryParams = new mutable.HashMap[String, String]
-  val headerParams = new mutable.HashMap[String, String]
+    // query params
+    val queryParams = new mutable.HashMap[String, String]
+    val headerParams = new mutable.HashMap[String, String]
 
   {{#allParams}}
       {{#required}}
           {{^isPrimitiveType}}
-      if ({{paramName}} == null) throw new Exception("Missing required parameter '{{paramName}}' when calling {{classname}}->{{operationId}}")
+    assert({{paramName}} != null, "Missing required parameter '{{paramName}}' when calling {{classname}}->{{operationId}}")
           {{/isPrimitiveType}}
           {{#isString}}
-      if ({{paramName}} == null) throw new Exception("Missing required parameter '{{paramName}}' when calling {{classname}}->{{operationId}}")
-
+    assert({{paramName}} != null, "Missing required parameter '{{paramName}}' when calling {{classname}}->{{operationId}}")
           {{/isString}}
       {{/required}}
   {{/allParams}}
@@ -75,9 +74,16 @@ class {{classname}}() {
       {{/required}}
   {{/headerParams}}
 
-
     basicRequest
       .{{httpMethodLowerCase}}(uri"{{basePath}}{{{pathWithInterpolations}}}{{{query}}}")
+  {{#headerParams}}
+      {{^required}}
+      .headerOpt({{basename}}, {{paramName}}.map(_.toString))
+      {{/required}}
+      {{#required}}
+      .header({{baseName}}, {{paramName}}.toString)
+      {{/required}}
+  {{/headerParams}}
 
     val resOpt = client.submit("{{httpMethod}}", path, queryParams.toMap, headerParams.toMap, {{#bodyParam}}writer.write({{paramName}}){{/bodyParam}}{{^bodyParam}}"{{emptyBodyParam}}"{{/bodyParam}})
     resOpt.map(reader.read)
