@@ -1,16 +1,12 @@
 {{>licenseInfo}}
 package {{invokerPackage}}
 
-import {{modelPackage}}._
 import io.circe.Encoder
-import io.circe.generic.auto._
+import io.circe.generic.semiauto._
+import java.util.Date
+import java.io.File
 
 object Encoders {
-  // implicit def encoder[T]: Encoder[T] = ???
-
-{{#models}}
-    {{#model}}
-  // implicit def encoder{{classname}}: Encoder[{{classname}}] = implicitly[{{classname}}]
-    {{/model}}
-{{/models}}
+  implicit val dateEncoder: Encoder[Date] = ???
+  implicit val fileEncoder: Encoder[File] = ???
 }

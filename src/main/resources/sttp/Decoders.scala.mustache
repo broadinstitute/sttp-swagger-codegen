@@ -2,7 +2,10 @@
 package {{invokerPackage}}
 
 import io.circe.Decoder
+import java.util.Date
+import java.io.File
 
 object Decoders {
-  implicit def decoder[T]: Decoder[T] = ???
+  implicit val dateDecoder: Decoder[Date] = ???
+  implicit val fileDecoder: Decoder[File] = ???
 }

@@ -1,7 +1,9 @@
 {{>licenseInfo}}
 package {{package}}
 
-{{#imports}}import {{import}}
+{{#imports}}
+import {{import}}
+import {{import}}._
 {{/imports}}
 
 import sttp.client._

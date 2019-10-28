@@ -2,6 +2,8 @@ package org.broadinstitute.codegen.sttp;
 
 import io.swagger.codegen.*;
 import io.swagger.codegen.languages.AbstractScalaCodegen;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.UntypedProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -38,6 +40,8 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
                         "private", "protected", "return", "sealed", "super", "this", "throw",
                         "trait", "try", "true", "type", "val", "var", "while", "with", "yield")
         );
+
+        importMapping.put("Json", "io.circe.Json");
 
         additionalProperties.put(CodegenConstants.INVOKER_PACKAGE, invokerPackage);
         additionalProperties.put(CodegenConstants.GROUP_ID, groupId);
@@ -226,6 +230,14 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
     @Override
     public String toEnumName(CodegenProperty property) {
         return formatIdentifier(stripPackageName(property.baseName), true);
+    }
+
+    @Override
+    public String getSwaggerType(Property p) {
+        if(p instanceof UntypedProperty) {
+            return "Json";
+        }
+        return super.getSwaggerType(p);
     }
 
     static class ExtendedCodegenOperation extends CodegenOperation {

@@ -3,11 +3,13 @@ package {{package}}
 
 {{#imports}}
 import {{import}}
+import {{import}}._
 {{/imports}}
+import io.circe.generic.JsonCodec
 
 {{#models}}
 {{#model}}
-case class {{classname}} (
+@JsonCodec case class {{classname}} (
   {{#vars}}
   {{#description}}
   // {{{description}}}
