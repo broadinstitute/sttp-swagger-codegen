@@ -1,11 +1,40 @@
 {{>licenseInfo}}
 package {{invokerPackage}}
 
-import io.circe.Decoder
+import io.circe.{Decoder, DecodingFailure, HCursor}
 import java.util.Date
 import java.io.File
+import java.text.SimpleDateFormat
+
+import io.circe.Decoder.Result
 
 object Decoders {
-  implicit val dateDecoder: Decoder[Date] = ???
-  implicit val fileDecoder: Decoder[File] = ???
+
+  val dateFormats: Seq[SimpleDateFormat] = Seq("dd/MM/yyyy").map(new SimpleDateFormat(_))
+
+  def parseDate(string: String): Either[String, Date] = {
+    var date: Date = null
+    val dateFormatIter = dateFormats.iterator
+    while (date == null && dateFormatIter.hasNext) {
+      val dateFormat = dateFormatIter.next()
+      date = dateFormat.parse(string)
+    }
+    if (date != null) {
+      Right(date)
+    } else {
+      Left("Cannot parse date - unsupported format.")
+    }
+  }
+
+  implicit val dateDecoder: Decoder[Date] = new Decoder[Date] {
+    override def apply(cursor: HCursor): Result[Date] = {
+      cursor.as[String].flatMap(parseDate(_).left.map(DecodingFailure(_, cursor.history)))
+    }
+  }
+
+  implicit val fileDecoder: Decoder[File] = new Decoder[File] {
+    override def apply(cursor: HCursor): Result[File] = {
+      cursor.as[String].map(new File(_))
+    }
+  }
 }

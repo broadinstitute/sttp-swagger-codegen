@@ -1,12 +1,16 @@
 {{>licenseInfo}}
 package {{invokerPackage}}
 
-import io.circe.Encoder
+import io.circe.{Encoder, Json}
 import io.circe.generic.semiauto._
 import java.util.Date
 import java.io.File
 
 object Encoders {
-  implicit val dateEncoder: Encoder[Date] = ???
-  implicit val fileEncoder: Encoder[File] = ???
+  implicit val dateEncoder: Encoder[Date] = new Encoder[Date] {
+    override def apply(date: Date): Json = Json.fromString(date.toString)
+  }
+  implicit val fileEncoder: Encoder[File] = new Encoder[File] {
+    override def apply(file: File): Json = Json.fromString(file.toString)
+  }
 }

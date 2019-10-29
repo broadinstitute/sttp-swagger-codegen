@@ -235,18 +235,11 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
 
     @Override
     public String getSwaggerType(Property p) {
-        if(p instanceof UntypedProperty) {
-            return "Json";
+        String superSwaggerType = super.getSwaggerType(p);
+        if(superSwaggerType.equals("Any")) {
+            superSwaggerType = "Json";
         }
-        if(super.getSwaggerType(p).equals("Any")) {
-            if(p instanceof ObjectProperty) {
-                ObjectProperty op = (ObjectProperty) p;
-                System.out.println("Oh, no, object property " + p + " of type " + op.getType() + " is mapped to 'Any'!");
-            } else {
-                System.out.println("Oh, no, property " + p + " is mapped to 'Any'!");
-            }
-        }
-        return super.getSwaggerType(p);
+        return superSwaggerType;
     }
 
     static class ExtendedCodegenOperation extends CodegenOperation {

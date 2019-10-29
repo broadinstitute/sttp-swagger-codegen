@@ -2226,7 +2226,6 @@ paths:
           description: The preferences to set as a Map[String, String]
           required: true
           schema:
-            $ref: '#/definitions/MapOfStrings'
             type: object
             additionalProperties:
               type: string
@@ -4366,7 +4365,8 @@ paths:
           description: New attribute values, as Map[String, Attribute]. WARNING! This should not be used to change library metadata (republish will not happen). Use UpdateAttributes in the library section
           required: true
           schema:
-            $ref: '#/definitions/MapOfAnyJsonValues'
+            type: object
+            additionalProperties: {}
           in: body
       responses:
         200:
@@ -5112,6 +5112,16 @@ parameters:
     required: true
     type: string
     in: path
+  preferencesParam:
+    name: preferences
+    in: body
+    description: The preferences to set as a Map[String, String]
+    required: true
+    schema:
+      type: object
+      additionalProperties:
+        type: string
+
 
 ##########################################################################################
 ## DEFINITIONS
@@ -6038,15 +6048,6 @@ definitions:
         type: array
         items:
           type: string
-
-  MapOfAnyJsonValues:
-    type: object
-    additionalProperties: {}
-
-  MapOfStrings:
-    type: object
-    additionalProperties:
-      type: string
 
   Me:
     type: object
