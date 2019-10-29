@@ -2226,6 +2226,7 @@ paths:
           description: The preferences to set as a Map[String, String]
           required: true
           schema:
+            $ref: '#/definitions/MapOfStrings'
             type: object
             additionalProperties:
               type: string
@@ -4365,7 +4366,7 @@ paths:
           description: New attribute values, as Map[String, Attribute]. WARNING! This should not be used to change library metadata (republish will not happen). Use UpdateAttributes in the library section
           required: true
           schema:
-            type: object
+            $ref: '#/definitions/MapOfAnyJsonValues'
           in: body
       responses:
         200:
@@ -5246,12 +5247,12 @@ definitions:
         type: object
         description: map of log files from backend
         additionalProperties:
-          type: file
+          type: string
       outputs:
         type: object
         description: map from output names to local files
         additionalProperties:
-          type: file
+          type: string
       start:
         type: string
         format: date-time
@@ -5389,6 +5390,7 @@ definitions:
         description: List of Owners.
       method:
         type: object
+        additionalProperties: {}
       namespace:
         type: string
         description: Namespace which contains AgoraEntity.
@@ -6037,6 +6039,15 @@ definitions:
         items:
           type: string
 
+  MapOfAnyJsonValues:
+    type: object
+    additionalProperties: {}
+
+  MapOfStrings:
+    type: object
+    additionalProperties:
+      type: string
+
   Me:
     type: object
     properties:
@@ -6087,6 +6098,8 @@ definitions:
       workspaceName:
         type: object
         description: Map[String, String] with corresponding workspace-related information - name and namespace
+        additionalProperties:
+          type: string
     required:
       - namespace
       - name
@@ -6113,12 +6126,18 @@ definitions:
       prerequisites:
         type: object
         description: Map[String, String]
+        additionalProperties:
+          type: string
       inputs:
         type: object
         description: Map[String, String]
+        additionalProperties:
+          type: string
       outputs:
         type: object
         description: Map[String, String]
+        additionalProperties:
+          type: string
       methodRepoMethod:
         $ref: '#/definitions/MethodRepoMethod'
         description: The properties of the method from the method store that this config is associated with
@@ -6371,15 +6390,23 @@ definitions:
       inputs:
         type: object
         description: Input map - Map[string, string]
+        additionalProperties:
+          type: string
       outputs:
         type: object
         description: Output map - Map[string, string]
+        additionalProperties:
+          type: string
       prerequisites:
         type: object
         description: Prerequisites map - Map[string, string]
+        additionalProperties:
+          type: string
       methodRepoMethod:
         type: object
         description: Method ID - Map
+        additionalProperties:
+          type: string
       methodConfigVersion:
         type: integer
         format: int32
@@ -6917,6 +6944,7 @@ definitions:
       systems:
         type: object
         description: Map[String, SubsystemStatus]
+        additionalProperties: {}
         example:
           Agora:
             ok: true
@@ -7173,6 +7201,7 @@ definitions:
           type: string
       invalidInputs:
         type: object
+        additionalProperties: {}
       missingInputs:
         type: array
         items:
@@ -7187,6 +7216,7 @@ definitions:
           type: string
       invalidOutputs:
         type: object
+        additionalProperties: {}
       methodConfiguration:
         $ref: '#/definitions/MethodConfiguration'
 
@@ -7251,6 +7281,9 @@ definitions:
       workflowCountsByStatus:
         type: object
         description: Map[String,Int]
+        additionalProperties:
+          type: integer
+          format: int32
 
   WorkflowStatus:
     type: string
@@ -7330,6 +7363,8 @@ definitions:
       acl:
         type: object
         description: Map[String, WorkspaceAccessEntry]
+        additionalProperties:
+          $ref: '#/definitions/WorkspaceAccessEntry'
 
   WorkspaceACLUpdate:
     description: ''
@@ -7507,7 +7542,7 @@ definitions:
         description: tag string
         example: "a tag"
       count:
-        type: number
+        type: integer
         format: int32
         description: number of usages of the tag across Firecloud
         example: 5
@@ -7542,9 +7577,13 @@ definitions:
       outputs:
         type: object
         description: Map[String, AttributeString] from method's WDL outputs to fields in the workspace data model
+        additionalProperties:
+          type: string
       inputs:
         type: object
         description: Map[String, AttributeString] from method's WDL inputs to fields in the workspace data model
+        additionalProperties:
+          type: string
       rootEntityType:
         type: string
         default: pair
@@ -7552,6 +7591,8 @@ definitions:
         type: object
         description: Map[String, AttributeString]
         default: {}
+        additionalProperties:
+          type: string
       methodConfigVersion:
         type: integer
         format: int32

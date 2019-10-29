@@ -2,6 +2,7 @@ package org.broadinstitute.codegen.sttp;
 
 import io.swagger.codegen.*;
 import io.swagger.codegen.languages.AbstractScalaCodegen;
+import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.UntypedProperty;
 import org.apache.commons.lang3.StringUtils;
@@ -236,6 +237,14 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
     public String getSwaggerType(Property p) {
         if(p instanceof UntypedProperty) {
             return "Json";
+        }
+        if(super.getSwaggerType(p).equals("Any")) {
+            if(p instanceof ObjectProperty) {
+                ObjectProperty op = (ObjectProperty) p;
+                System.out.println("Oh, no, object property " + p + " of type " + op.getType() + " is mapped to 'Any'!");
+            } else {
+                System.out.println("Oh, no, property " + p + " is mapped to 'Any'!");
+            }
         }
         return super.getSwaggerType(p);
     }

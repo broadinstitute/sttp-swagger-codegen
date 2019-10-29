@@ -5,6 +5,8 @@ package {{package}}
 import {{import}}
 import {{import}}._
 {{/imports}}
+import {{invokerPackage}}.Decoders._
+import {{invokerPackage}}.Encoders._
 import io.circe.generic.JsonCodec
 
 {{#models}}
