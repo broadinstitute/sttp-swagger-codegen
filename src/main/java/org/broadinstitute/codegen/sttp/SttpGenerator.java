@@ -18,6 +18,8 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
     protected String artifactId = "swagger-sttp-client";
     protected String artifactVersion = "1.0.0";
     protected String clientName = "SttpClient";
+    protected String invokerPackage = "org.broadinstitute.starfire";
+
 
     public SttpGenerator() {
         super();
@@ -25,8 +27,8 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
         modelTemplateFiles.put("model.mustache", ".scala");
         apiTemplateFiles.put("api.mustache", ".scala");
         embeddedTemplateDir = templateDir = "sttp";
-        apiPackage = "io.swagger.client.api";
-        modelPackage = "io.swagger.client.model";
+        apiPackage = "org.broadinstitute.starfire.api";
+        modelPackage = "org.broadinstitute.starfire.model";
 
         setReservedWordsLowerCase(
                 Arrays.asList(
