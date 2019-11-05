@@ -2,9 +2,7 @@ package org.broadinstitute.codegen.sttp;
 
 import io.swagger.codegen.*;
 import io.swagger.codegen.languages.AbstractScalaCodegen;
-import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
-import io.swagger.models.properties.UntypedProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -18,7 +16,7 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
     protected String artifactId = "swagger-sttp-client";
     protected String artifactVersion = "1.0.0";
     protected String clientName = "SttpClient";
-    protected String invokerPackage = "org.broadinstitute.starfire";
+    protected String invokerPackage = "io.swagger.sttp.utils";
 
 
     public SttpGenerator() {
@@ -27,8 +25,8 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
         modelTemplateFiles.put("model.mustache", ".scala");
         apiTemplateFiles.put("api.mustache", ".scala");
         embeddedTemplateDir = templateDir = "sttp";
-        apiPackage = "org.broadinstitute.starfire.api";
-        modelPackage = "org.broadinstitute.starfire.model";
+        apiPackage = "io.swagger.sttp.api";
+        modelPackage = "io.swagger.sttp.model";
 
         setReservedWordsLowerCase(
                 Arrays.asList(
@@ -60,8 +58,6 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
                 (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "Decoders.scala"));
         supportingFiles.add(new SupportingFile("Encoders.scala.mustache",
                 (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "Encoders.scala"));
-        supportingFiles.add(new SupportingFile("Backends.scala.mustache",
-                (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "Backends.scala"));
         supportingFiles.add(new SupportingFile("SttpUtils.scala.mustache",
                 (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "SttpUtils.scala"));
         supportingFiles.add(new SupportingFile("client.mustache",
@@ -76,6 +72,7 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
 
         importMapping.put("Date", "java.util.Date");
         importMapping.put("ListBuffer", "scala.collection.mutable.ListBuffer");
+        importMapping.put("File", "better.files.File");
 
         typeMapping = new HashMap<String, String>();
         typeMapping.put("enum", "NSString");
@@ -91,7 +88,7 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
         typeMapping.put("char", "Char");
         typeMapping.put("double", "Double");
         typeMapping.put("object", "Any");
-        typeMapping.put("file", "File");
+        typeMapping.put("file", "better.files.File");
         typeMapping.put("binary", "Array[Byte]");
         typeMapping.put("ByteArray", "Array[Byte]");
         typeMapping.put("ArrayByte", "Array[Byte]");
