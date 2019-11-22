@@ -23,12 +23,12 @@ object {{classname}} {
    * {{notes}}
    *
 {{#allParams}}   * @param {{paramName}} {{description}} {{^required}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
-{{/allParams}}   * @return Option[{{returnTypeOrUnit}}]
+{{/allParams}}   * @return Option[{{returnTypeOrJson}}]
    */
   def {{operationId}}(
     {{#allParams}}{{^required}}{{paramName}}: Option[{{dataType}}] = {{#defaultValue}}Option({{#isString}}"{{{defaultValue}}}"{{/isString}}{{^isString}}{{#isByteArray}}"{{/isByteArray}}{{#isDate}}dateFormatter.parse("{{/isDate}}{{#isDateTime}}dateTimeFormatter.parse("{{/isDateTime}}{{{defaultValue}}}{{#isDate}}"){{/isDate}}{{#isDateTime}}"){{/isDateTime}}{{#isByteArray}}".getBytes{{/isByteArray}}{{/isString}}){{/defaultValue}}{{^defaultValue}}None{{/defaultValue}}{{#hasMore}},{{/hasMore}}
     {{/required}}{{#required}}{{paramName}}: {{dataType}}{{#defaultValue}} = {{#isString}}"{{{defaultValue}}}"{{/isString}}{{^isString}}{{#isByteArray}}"{{/isByteArray}}{{#isDate}}dateFormatter.parse("{{/isDate}}{{#isDateTime}}dateTimeFormatter.parse("{{/isDateTime}}{{{defaultValue}}}{{#isDate}}"){{/isDate}}{{#isDateTime}}"){{/isDateTime}}{{#isByteArray}}".getBytes{{/isByteArray}}{{/isString}}{{/defaultValue}}{{#hasMore}},
-    {{/hasMore}}{{/required}}{{/allParams}}): Request[Either[ResponseError[io.circe.Error],{{returnTypeOrUnit}}],Nothing] = {
+    {{/hasMore}}{{/required}}{{/allParams}}): Request[Either[ResponseError[io.circe.Error],{{returnTypeOrJson}}],Nothing] = {
   {{#allParams}}
       {{#required}}
           {{^isPrimitiveType}}
@@ -53,7 +53,7 @@ object {{classname}} {
   {{#bodyParam}}
       .body({{paramName}})
   {{/bodyParam}}
-      .response(asJson[{{returnTypeOrUnit}}])
+      .response(asJson[{{returnTypeOrJson}}])
   }
 
   {{/operation}}

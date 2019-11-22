@@ -235,7 +235,7 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
     @Override
     public String getSwaggerType(Property p) {
         String superSwaggerType = super.getSwaggerType(p);
-        if(superSwaggerType.equals("Any")) {
+        if(superSwaggerType.equals("Any") || superSwaggerType.equals("Unit")) {
             superSwaggerType = "Json";
         }
         return superSwaggerType;
@@ -325,8 +325,8 @@ public class SttpGenerator extends AbstractScalaCodegen implements CodegenConfig
             return queryTmp;
         }
 
-        public String getReturnTypeOrUnit() {
-          return (returnType != null) ? returnType : "Unit";
+        public String getReturnTypeOrJson() {
+          return (returnType != null) ? returnType : "io.circe.Json";
         }
     }
 
